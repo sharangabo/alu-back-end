@@ -1,52 +1,34 @@
-#!/usr/bin/python3
-"""
-    python script that exports data in the CSV format
-"""
 import csv
-import json
 import requests
-from sys import argv
+import sys
 
 
 if __name__ == "__main__":
-    """
-        request user info by employee ID
-    """
-    request_employee = requests.get(
-        'https://jsonplaceholder.typicode.com/users/{}/'.format(argv[1]))
-    """
-        convert json to dictionary
-    """
-    user = json.loads(request_employee.text)
-    """
-        extract username
-    """
-    username = user.get("username")
-
-    """
-        request user's TODO list
-    """
-    request_todos = requests.get(
-        'https://jsonplaceholder.typicode.com/users/{}/todos'.format(argv[1]))
-    """
-        dictionary to store task status(completed) in boolean format
-    """
-    tasks = {}
-    """
-        convert json to list of dictionaries
-    """
-    user_todos = json.loads(request_todos.text)
-    """
-        loop through dictionary & get completed tasks
-    """
-    for dictionary in user_todos:
-        tasks.update({dictionary.get("title"): dictionary.get("completed")})
-
-    """
-        export to CSV
-    """
-    with open('{}.csv'.format(argv[1]), mode='w') as file:
-        file_editor = csv.writer(file, delimiter=',', quoting=csv.QUOTE_ALL)
-        for k, v in tasks.items():
-            file_editor.writerow([argv[1], username, v, k])
+    if len(sys.argv) == 2 and sys.argv[1].isdigit():
+        user_id = int(sys.argv[1])
+        url = "https://jsonplaceholder.typicode.com"
+        response = requests.get(f"{url}/users/{user_id}")
+        if response.ok:
+            user = response.json()
+            response = requests.get(f"{url}/todos?userId={user_id}")
+            if response.ok:
+                todos = response.json()
+                with open(f"{user_id}.csv", mode="w") as csv_file:
+                    fieldnames = ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"]
+                    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                    writer.writeheader()
+                    for todo in todos:
+                        writer.writerow({
+                            "USER_ID": user["id"],
+                            "USERNAME": user["username"],
+                            "TASK_COMPLETED_STATUS": str(todo["completed"]),
+                            "TASK_TITLE": todo["title"]
+                        })
+                    print(f"{len(todos)} tasks have been exported to {user_id}.csv")
+            else:
+                print(f"Error: could not retrieve todos for user {user_id}")
+        else:
+            print(f"Error: could not retrieve user with id {user_id}")
+    else:
+        print("Usage: python3 1-export_to_CSV.py <user_id>")
         
