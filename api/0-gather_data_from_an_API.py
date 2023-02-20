@@ -51,5 +51,5 @@ if __name__ == "__main__":
         EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
     for k, v in tasks.items():
         if v is True:
-            print("\t {}".format(k))
-            
+            print("\t {}".format(k)
+           
