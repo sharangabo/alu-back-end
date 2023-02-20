@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import csv
 import requests
 import sys
@@ -31,4 +32,3 @@ if __name__ == "__main__":
             print(f"Error: could not retrieve user with id {user_id}")
     else:
         print("Usage: python3 1-export_to_CSV.py <user_id>")
-        
