@@ -27,4 +27,3 @@ if __name__ == '__main__':
                     '"' + str(task["completed"]) + '",' +
                     '"' + task["title"] + '",' + "\n")
          for task in todos_info]
-
