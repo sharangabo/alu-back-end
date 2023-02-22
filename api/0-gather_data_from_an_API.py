@@ -27,3 +27,4 @@ if __name__ == '__main__':
           format(employee_name, number_of_done_tasks, total_number_of_tasks))
 
     [print("\t " + task["title"]) for task in task_completed]
+
